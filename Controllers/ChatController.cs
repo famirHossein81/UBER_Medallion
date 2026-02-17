@@ -78,6 +78,7 @@ namespace crud.Controllers
     - customer_cancel_reason (VARCHAR) -- Reason if customer cancelled
     - driver_cancel_reason (VARCHAR)   -- Reason if driver cancelled
     - unified_cancellation_reason (VARCHAR) -- The text reason why a trip failed (Main column for reasons)
+    - revenue_per_km (DECIMAL) -- Pre-calculated revenue per km. Use this instead of dividing.
     ";
 
             var payload = new
@@ -95,7 +96,9 @@ namespace crud.Controllers
                           $"3. If the question is about REVENUE, DURATION, or RATINGS, add condition: WHERE booking_status = 'Completed'.\n" +
                           $"4. If the question is about CANCELLATIONS, add condition: WHERE booking_status != 'Completed'.\n" +
                           $"5. If the question is unrelated to data, return 'ERROR: Irrelevant'.\n" +
-                          $"6. If the user asks for a list of text values (like reasons or types), always use 'SELECT DISTINCT'."
+                          $"6. If the user asks for a list of text values (like reasons or types), always use 'SELECT DISTINCT'."+
+                          $"7. When dividing by ride_distance, ALWAYS use NULLIF(ride_distance, 0) to avoid division by zero errors.\n"
+                          
             },
             new { role = "user", content = userQuestion }
         },
